@@ -1,0 +1,863 @@
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css?family=Tinos" rel="stylesheet">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js" type="text/javascript"></script>
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<style>
+
+
+.Forms_Wrapper {
+  padding: 20px 20px;
+  display: block;
+  background-color:  #F2F1F1;
+  border-radius: 4pt;
+  box-shadow: 0px 2px 3px #cccccc;
+  margin: 0 auto;
+  width: 50%;
+}
+
+
+.PPD_Form {
+
+}
+
+.CV_Form {
+  margin-top: 40px;
+}
+
+.Form_Header_Label {
+  color: #911307;
+}
+
+form label {
+  color: #565559;
+}
+
+form li {
+  list-style-type: none;
+  padding: 8px 0px;
+}
+
+form input {
+  display: inline;
+  float: right;
+  clear: both;
+  margin-left: 20px;
+  padding: 2px 2px;
+}
+
+.PPD_Form input {
+  width: 230px;
+}
+
+form select {
+  display: inline;
+  float: right;
+  clear: both;
+}
+
+.Output_Value {
+  float: right;
+  color: #911307;
+  width: 130px;
+  text-align: right;
+  font-family: 'PT Serif', serif;
+}
+
+.dateCalculator {
+  margin-top: 40px;
+}
+
+.dateContainer {
+  display: block;
+  padding: 8px 0px;
+}
+
+.dateInput {
+  display: inline;
+  float: right;
+}
+
+.dateLabel {
+  display: inline;
+  color: #565559;
+}
+
+.dateOutput {
+  display: inline;
+  float: right;
+  color: #911307;
+}
+
+</style>
+</head>
+
+
+<body>
+<div class="Forms_Wrapper">
+  <form class="PPD_Form">
+      <h3 class="Form_Header_Label" >NC PPD Calculator</h3>
+      <hr>
+
+      <li>
+        <label>Compensation Rate</label>
+        <input onkeyup="calculatePPD()" id = 'compensationRate' placeholder="$">
+        </li>
+
+      <li>
+        <label>Impairment Rating</label>
+        <input onkeyup="calculatePPD()" align="right" id = 'impairmentRating' placeholder="%">
+      </li>
+
+      <li>
+
+        <label>Bodypart </label>
+
+        <select  onChange="calculatePPD()"  id="bodypart_options" >
+
+          <option > Select Bodypart </option>
+          <option data-weeks= '75' > Thumb - 75 Weeks </option>
+          <option data-weeks= '45' > Index Finger - 45 Weeks </option >
+          <option data-weeks= '40' > Middle Finger - 40 Weeks </option >
+          <option data-weeks= '25' >Ring Finger - 25 Weeks</option >
+          <option data-weeks= '20' >Little Finger - 20 Weeks</option >
+          <option data-weeks= '35' >Large Toe - 35 Weeks</option >
+          <option data-weeks= '10'>Toe Other Than Large Toe - 10 Weeks</option >
+          <option data-weeks= '200' > Hand - 200 Weeks </option >
+          <option data-weeks= '240' > Arm - 240 Weeks </option >
+          <option data-weeks= '144' >Foot - 144 Weeks</option >
+          <option data-weeks= '200' >Leg - 200 Weeks</option >
+          <option data-weeks= '120' > Loss Of Sight In One Eye - 120 Weeks</option >
+          <option data-weeks= '300' >Back - 300 Weeks</option >
+          <option data-weeks= '80' >Hearing Loss - One Ear - 70 Weeks</option >
+          <option data-weeks= '150' >Hearing Loss - Both Ears - 150 Weeks</option >
+
+        </select>
+
+      </li>
+
+      <li class='Output_List_Item'>
+        <label class='Output_Label'> PPD: <label>
+        <label id='PPD_Value' class="Output_Value"> $0.00 </label>
+      </li>
+
+    </form>
+
+
+    <form class="CV_Form">
+
+      <h3 class="Form_Header_Label" >NC Commuted Value Calculator</h3>
+      <hr>
+
+      <li>
+        <label>Number of Weeks</label>
+        <input onkeyup="calculate_commuted_value()" id = 'commutedValueWeeks'>
+      </li>
+
+      <li>
+        <label>Weekly Payment</label>
+        <input onkeyup="calculate_commuted_value()"  id = 'commutedValuePayment' placeholder="$">
+      </li>
+
+      <li class='Output_List_Item'>
+        <label class='Output_Label'>Commuted Value Amount:</label>
+        <label id="commutedValue" class='Output_Value'> $0.00 </label>
+      </li>
+
+    </form>
+
+    <div class="dateCalculator">
+
+      <h3 class="Form_Header_Label" >Date Calculator</h3>
+      <hr>
+
+      <div class="dateContainer">
+
+        <label class="dateLabel">Start Date: </label>
+
+        <div class="dateInput"><input type="text" id="datepicker1" size="12" placeholder ="mm/dd/yyyy">&nbsp;<input type="text" id="alternate1" size="24"></div>
+
+      </div>
+
+      <div class="dateContainer">
+
+        <label class="dateLabel">End Date: </label>
+
+        <div class="dateInput"> <input type="text" id="datepicker2" size="12" placeholder ="mm/dd/yyyy">&nbsp;<input type="text" id="alternate2" size="24"> </div>
+
+      </div>
+
+      <div class="dateContainer">
+
+      <button id="click">Calculate</button>
+
+      <label class="dateOutput" id="output" ></label>
+
+      </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<script type="text/javascript">
+
+
+function calculatePPD() {
+  var bodypartOptions = document.getElementById("bodypart_options");
+  var weeks = bodypartOptions[bodypartOptions.selectedIndex].getAttribute("data-weeks")
+  var compRate = $("#compensationRate").val()
+  var impairmentRating = $("#impairmentRating").val()
+
+  var ir = Math.min(100, impairmentRating)
+
+  var value = weeks * compRate * (ir/100)
+  var number = formatNumber(value)
+
+  if (isNaN(value)) {
+    $("#PPD_Value").html('$0.00');
+  } else {
+  //check 'value' in case a letter is accidentally typed in
+  //var number is a string after formatting
+  $("#PPD_Value").html(number);
+  }
+
+}
+
+function calculate_commuted_value() {
+    var payment = $("#commutedValuePayment").val();
+    var weeks = $("#commutedValueWeeks").val();
+    var value = tableValues[weeks] * payment
+    console.log(value)
+    if (isNaN(value)) {
+      $("#commutedValue").html('$0.00')
+    } else {
+      let formatedValue = formatNumber(value)
+      $("#commutedValue").html(formatedValue);
+    }
+}
+
+
+function formatNumber(number) {
+  //setting two decimal places and commas in number
+  var n = number.toFixed(2)
+  var parts = n.toString().split('.')
+  var afterDecimal = parts[0]
+  var number = Number(afterDecimal).toLocaleString()
+  return '$' + number + "." + parts[1]
+}
+
+
+
+var output = $("#output")
+var alternate1 = $("#alternate1")
+var datepicker1 = $("#datepicker11")
+
+$(function(){
+	var d1;
+	var d2;
+
+	var t = new Date();
+	var month = t.getMonth();
+	var day = t.getDay();
+	var date = t.getDate();
+	var year = t.getFullYear();
+	var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+	var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+	var today = "0"+(month+1)+"/"+date+"/"+year;
+	var dateStr = days[day]+', '+months[month]+' '+date+', '+year;
+
+	var bb = today.split(' ');
+	d1 = new Date(bb);
+
+
+	$("#datepicker1").datepicker({
+		showOtherMonths: true,
+		selectOtherMonths: true,
+		changeMonth: true,
+		changeYear: true,
+		altField: "#alternate1",
+		altFormat: "DD, MM d, yy",
+
+		onSelect: function() {
+			var a = $.datepicker.formatDate("yy mm dd", $(this).datepicker("getDate"));
+			var b = a.split(' ');
+			d1 = new Date(b);
+		}
+	});
+
+		$("#datepicker2").datepicker({
+		showOtherMonths: true,
+		selectOtherMonths: true,
+		changeMonth: true,
+		changeYear: true,
+		altField: "#alternate2",
+		altFormat: "DD, MM d, yy",
+
+		onSelect: function() {
+			var c = $.datepicker.formatDate("yy mm dd", $(this).datepicker("getDate"));
+			var g = c.split(' ');
+			d2 = new Date(g);
+		}
+	});
+
+	$("#click").bind('click',function(){
+	var oneDay = 24*60*60*1000;	// hours*minutes*seconds*milliseconds
+	var diffDays = Math.round((d2-d1)/oneDay);
+
+  if (isNaN(diffDays)) {
+
+    output.html("")
+
+    } else {
+
+    var weeks = Math.floor((diffDays)/7)
+    var days = ((diffDays)%7)
+    console.log(weeks)
+    console.log(days)
+
+    var outputString = ""
+    var weekString = "week"
+    var dayString = days + " day"
+
+    if (weeks !== 1) {
+      weekString += "s"
+    }
+
+    if (days !== 1) {
+      dayString += "s"
+    }
+
+    if (weeks > 0) {
+      outputString = weeks + " " + weekString + ", " + dayString
+    } else {
+      outputString = dayString
+    }
+
+  	output.html(outputString)
+    }
+  	});
+
+});
+
+
+
+
+
+var tableValues = Array();
+  tableValues[0] = .000 ;
+  tableValues[1] =  .9996  ;
+  tableValues[2] = 1.9988  ;
+  tableValues[3] = 2.9977  ;
+  tableValues[4] = 3.9961  ;
+  tableValues[5] = 4.9942  ;
+  tableValues[6] = 5.9919  ;
+  tableValues[7] = 6.9892  ;
+  tableValues[8] = 7.9862  ;
+  tableValues[9] = 8.9827  ;
+  tableValues[10] =  9.9789  ;
+  tableValues[11] =  10.9746 ;
+  tableValues[12] =  11.9700 ;
+  tableValues[13] =  12.9651 ;
+  tableValues[14] =  13.9597 ;
+  tableValues[15] =  14.9539 ;
+  tableValues[16] =  15.9478 ;
+  tableValues[17] =  16.9413 ;
+  tableValues[18] =  17.9344 ;
+  tableValues[19] =  18.9271 ;
+  tableValues[20] =  19.9194 ;
+  tableValues[21] =  20.9114 ;
+  tableValues[22] =  21.9030 ;
+  tableValues[23] =  22.8942 ;
+  tableValues[24] =  23.8850 ;
+  tableValues[25] =  24.8754 ;
+  tableValues[26] =  25.8655 ;
+  tableValues[27] =  26.8551 ;
+  tableValues[28] =  27.8444 ;
+  tableValues[29] =  28.8333 ;
+  tableValues[30] =  29.8219 ;
+  tableValues[31] =  30.8100 ;
+  tableValues[32] =  31.7978 ;
+  tableValues[33] =  32.7852 ;
+  tableValues[34] =  33.7722 ;
+  tableValues[35] =  34.7588 ;
+  tableValues[36] =  35.7451 ;
+  tableValues[37] =  36.7310 ;
+  tableValues[38] =  37.7164 ;
+  tableValues[39] =  38.7016 ;
+  tableValues[40] =  39.6863 ;
+  tableValues[41] =  40.6707 ;
+  tableValues[42] =  41.6546 ;
+  tableValues[43] =  42.6382 ;
+  tableValues[44] =  43.6215 ;
+  tableValues[45] =  44.6043 ;
+  tableValues[46] =  45.5868 ;
+  tableValues[47] =  46.5689 ;
+  tableValues[48] =  47.5506 ;
+  tableValues[49] =  48.5319 ;
+  tableValues[50] =  49.5129 ;
+  tableValues[51] =  50.4934 ;
+  tableValues[52] =  51.4736 ;
+  tableValues[53] =  52.4535 ;
+  tableValues[54] =  53.4329 ;
+  tableValues[55] =  54.4120 ;
+  tableValues[56] =  55.3907 ;
+  tableValues[57] =  56.3690 ;
+  tableValues[58] =  57.3469 ;
+  tableValues[59] =  58.3245 ;
+  tableValues[60] =  59.3017 ;
+  tableValues[61] =  60.2785 ;
+  tableValues[62] =  61.2550 ;
+  tableValues[63] =  62.2310 ;
+  tableValues[64] =  63.2067 ;
+  tableValues[65] =  64.1820 ;
+  tableValues[66] =  65.1570 ;
+  tableValues[67] =  66.1315 ;
+  tableValues[68] =  67.1057 ;
+  tableValues[69] =  68.0795 ;
+  tableValues[70] =  69.0530 ;
+  tableValues[71] =  70.0260 ;
+  tableValues[72] =  70.9987 ;
+  tableValues[73] =  71.9711 ;
+  tableValues[74] =  72.9430 ;
+  tableValues[75] =  73.9146 ;
+  tableValues[76] =  74.8858 ;
+  tableValues[77] =  75.8566 ;
+  tableValues[78] =  76.8270 ;
+  tableValues[79] =  77.7971 ;
+  tableValues[80] =  78.7668 ;
+  tableValues[81] =  79.7362 ;
+  tableValues[82] =  80.7051 ;
+  tableValues[83] =  81.6737 ;
+  tableValues[84] =  82.6419 ;
+  tableValues[85] =  83.6098 ;
+  tableValues[86] =  84.5772 ;
+  tableValues[87] =  85.5443 ;
+  tableValues[88] =  86.5111 ;
+  tableValues[89] =  87.4774 ;
+  tableValues[90] =  88.4434 ;
+  tableValues[91] =  89.4090 ;
+  tableValues[92] =  90.3743 ;
+  tableValues[93] =  91.3391 ;
+  tableValues[94] =  92.3036 ;
+  tableValues[95] =  93.2677 ;
+  tableValues[96] =  94.2315 ;
+  tableValues[97] =  95.1949 ;
+  tableValues[98] =  96.1579 ;
+  tableValues[99] =  97.1206 ;
+  tableValues[100] = 98.0828 ;
+  tableValues[101] = 96.3595 ;
+  tableValues[102] = 97.2704 ;
+  tableValues[103] = 98.1805 ;
+  tableValues[104] = 99.0898 ;
+  tableValues[105] = 99.9983 ;
+  tableValues[106] = 100.9061  ;
+  tableValues[107] = 101.8130  ;
+  tableValues[108] = 102.7192  ;
+  tableValues[109] = 103.6245  ;
+  tableValues[110] = 104.5291  ;
+  tableValues[111] = 105.4329  ;
+  tableValues[112] = 106.3359  ;
+  tableValues[113] = 107.2382  ;
+  tableValues[114] = 108.1396  ;
+  tableValues[115] = 109.0403  ;
+  tableValues[116] = 109.9402  ;
+  tableValues[117] = 110.8393  ;
+  tableValues[118] = 111.7377  ;
+  tableValues[119] = 112.6353  ;
+  tableValues[120] = 113.5321  ;
+  tableValues[121] = 114.4281  ;
+  tableValues[122] = 115.3234  ;
+  tableValues[123] = 116.2179  ;
+  tableValues[124] = 117.1116  ;
+  tableValues[125] = 118.0046  ;
+  tableValues[126] = 118.8968  ;
+  tableValues[127] = 119.7882  ;
+  tableValues[128] = 120.6789  ;
+  tableValues[129] = 121.5688  ;
+  tableValues[130] = 122.4580  ;
+  tableValues[131] = 123.3464  ;
+  tableValues[132] = 124.2340  ;
+  tableValues[133] = 125.1209  ;
+  tableValues[134] = 126.0070  ;
+  tableValues[135] = 126.8924  ;
+  tableValues[136] = 127.7771  ;
+  tableValues[137] = 128.6609  ;
+  tableValues[138] = 129.5441  ;
+  tableValues[139] = 130.4265  ;
+  tableValues[140] = 131.3081  ;
+  tableValues[141] = 132.1890  ;
+  tableValues[142] = 133.0692  ;
+  tableValues[143] = 133.9486  ;
+  tableValues[144] = 134.8272  ;
+  tableValues[145] = 135.7052  ;
+  tableValues[146] = 136.5824  ;
+  tableValues[147] = 137.4588  ;
+  tableValues[148] = 138.3345  ;
+  tableValues[149] = 139.2095  ;
+  tableValues[150] = 140.0838  ;
+  tableValues[151] = 140.9573  ;
+  tableValues[152] = 141.8301  ;
+  tableValues[153] = 142.7021  ;
+  tableValues[154] = 143.5735  ;
+  tableValues[155] = 144.4441  ;
+  tableValues[156] = 145.3140  ;
+  tableValues[157] = 146.1831  ;
+  tableValues[158] = 147.0515  ;
+  tableValues[159] = 147.9192  ;
+  tableValues[160] = 148.7862  ;
+  tableValues[161] = 149.6525  ;
+  tableValues[162] = 150.5180  ;
+  tableValues[163] = 151.3829  ;
+  tableValues[164] = 152.2470  ;
+  tableValues[165] = 153.1104  ;
+  tableValues[166] = 153.9734  ;
+  tableValues[167] = 154.8350  ;
+  tableValues[168] = 155.6963  ;
+  tableValues[169] = 156.5568  ;
+  tableValues[170] = 157.4166  ;
+  tableValues[171] = 158.2758  ;
+  tableValues[172] = 159.1342  ;
+  tableValues[173] = 159.9919  ;
+  tableValues[174] = 160.8489  ;
+  tableValues[175] = 161.7052  ;
+  tableValues[176] = 162.5608  ;
+  tableValues[177] = 163.4157  ;
+  tableValues[178] = 164.2699  ;
+  tableValues[179] = 165.1234  ;
+  tableValues[180] = 165.9762  ;
+  tableValues[181] = 166.8283  ;
+  tableValues[182] = 167.6797  ;
+  tableValues[183] = 168.5305  ;
+  tableValues[184] = 169.3805  ;
+  tableValues[185] = 170.2298  ;
+  tableValues[186] = 171.0785  ;
+  tableValues[187] = 171.9264  ;
+  tableValues[188] = 172.7737  ;
+  tableValues[189] = 173.6202  ;
+  tableValues[190] = 174.4661  ;
+  tableValues[191] = 175.3113  ;
+  tableValues[192] = 176.1558  ;
+  tableValues[193] = 176.9997  ;
+  tableValues[194] = 177.8428  ;
+  tableValues[195] = 178.6853  ;
+  tableValues[196] = 179.5271  ;
+  tableValues[197] = 180.3682  ;
+  tableValues[198] = 181.2086  ;
+  tableValues[199] = 182.0484  ;
+  tableValues[200] = 182.8875  ;
+  tableValues[201] = 183.7259  ;
+  tableValues[202] = 184.5636  ;
+  tableValues[203] = 185.4007  ;
+  tableValues[204] = 186.2371  ;
+  tableValues[205] = 187.0728  ;
+  tableValues[206] = 187.9078  ;
+  tableValues[207] = 188.7422  ;
+  tableValues[208] = 189.5759  ;
+  tableValues[209] = 190.4090  ;
+  tableValues[210] = 191.2413  ;
+  tableValues[211] = 192.0731  ;
+  tableValues[212] = 192.9041  ;
+  tableValues[213] = 193.7345  ;
+  tableValues[214] = 194.5642  ;
+  tableValues[215] = 195.3933  ;
+  tableValues[216] = 196.2217  ;
+  tableValues[217] = 197.0495  ;
+  tableValues[218] = 197.8766  ;
+  tableValues[219] = 198.7030  ;
+  tableValues[220] = 199.5288  ;
+  tableValues[221] = 200.3540  ;
+  tableValues[222] = 201.1785  ;
+  tableValues[223] = 202.0023  ;
+  tableValues[224] = 202.8255  ;
+  tableValues[225] = 203.6480  ;
+  tableValues[226] = 204.4699  ;
+  tableValues[227] = 205.2911  ;
+  tableValues[228] = 206.1117  ;
+  tableValues[229] = 206.9317  ;
+  tableValues[230] = 207.7510  ;
+  tableValues[231] = 208.5697  ;
+  tableValues[232] = 209.3877  ;
+  tableValues[233] = 210.2050  ;
+  tableValues[234] = 211.0218  ;
+  tableValues[235] = 211.8379  ;
+  tableValues[236] = 212.6533  ;
+  tableValues[237] = 213.4682  ;
+  tableValues[238] = 214.2824  ;
+  tableValues[239] = 215.0959  ;
+  tableValues[240] = 215.9088  ;
+  tableValues[241] = 216.7211  ;
+  tableValues[242] = 217.5328  ;
+  tableValues[243] = 218.3438  ;
+  tableValues[244] = 219.1542  ;
+  tableValues[245] = 219.9639  ;
+  tableValues[246] = 220.7731  ;
+  tableValues[247] = 221.5816  ;
+  tableValues[248] = 222.3895  ;
+  tableValues[249] = 223.1967  ;
+  tableValues[250] = 224.0033  ;
+  tableValues[251] = 224.8093  ;
+  tableValues[252] = 225.6147  ;
+  tableValues[253] = 226.4195  ;
+  tableValues[254] = 227.2236  ;
+  tableValues[255] = 228.0272  ;
+  tableValues[256] = 228.8301  ;
+  tableValues[257] = 229.6323  ;
+  tableValues[258] = 230.4340  ;
+  tableValues[259] = 231.2351  ;
+  tableValues[260] = 232.0355  ;
+  tableValues[261] = 232.8353  ;
+  tableValues[262] = 233.6345  ;
+  tableValues[263] = 234.4331  ;
+  tableValues[264] = 235.2311  ;
+  tableValues[265] = 236.0285  ;
+  tableValues[266] = 236.8253  ;
+  tableValues[267] = 237.6214  ;
+  tableValues[268] = 238.4170  ;
+  tableValues[269] = 239.2119  ;
+  tableValues[270] = 240.0063  ;
+  tableValues[271] = 240.8000  ;
+  tableValues[272] = 241.5932  ;
+  tableValues[273] = 242.3857  ;
+  tableValues[274] = 243.1776  ;
+  tableValues[275] = 243.9689  ;
+  tableValues[276] = 244.7597  ;
+  tableValues[277] = 245.5498  ;
+  tableValues[278] = 246.3393  ;
+  tableValues[279] = 247.1283  ;
+  tableValues[280] = 247.9166  ;
+  tableValues[281] = 248.7043  ;
+  tableValues[282] = 249.4915  ;
+  tableValues[283] = 250.2780  ;
+  tableValues[284] = 251.0640  ;
+  tableValues[285] = 251.8494  ;
+  tableValues[286] = 252.6341  ;
+  tableValues[287] = 253.4183  ;
+  tableValues[288] = 254.2019  ;
+  tableValues[289] = 254.9849  ;
+  tableValues[290] = 255.7674  ;
+  tableValues[291] = 256.5492  ;
+  tableValues[292] = 257.3304  ;
+  tableValues[293] = 258.1111  ;
+  tableValues[284] = 258.8912  ;
+  tableValues[295] = 259.6707  ;
+  tableValues[296] = 260.4496  ;
+  tableValues[297] = 261.2279  ;
+  tableValues[298] = 262.0057  ;
+  tableValues[299] = 262.7829  ;
+  tableValues[300] = 263.5595  ;
+  tableValues[301] = 264.3355  ;
+  tableValues[302] = 265.1109  ;
+  tableValues[303] = 265.8858  ;
+  tableValues[304] = 266.6601  ;
+  tableValues[305] = 267.4338  ;
+  tableValues[306] = 268.2069  ;
+  tableValues[307] = 268.9795  ;
+  tableValues[308] = 269.7515  ;
+  tableValues[309] = 270.5229  ;
+  tableValues[310] = 271.2938  ;
+  tableValues[311] = 272.0641  ;
+  tableValues[312] = 272.8338  ;
+  tableValues[313] = 273.6029  ;
+  tableValues[314] = 274.3715  ;
+  tableValues[315] = 275.1395  ;
+  tableValues[316] = 275.9070  ;
+  tableValues[317] = 276.6739  ;
+  tableValues[318] = 277.4402  ;
+  tableValues[319] = 278.2060  ;
+  tableValues[320] = 278.9712  ;
+  tableValues[321] = 279.7358  ;
+  tableValues[322] = 280.4999  ;
+  tableValues[323] = 281.2634  ;
+  tableValues[324] = 282.0264  ;
+  tableValues[325] = 282.7888  ;
+  tableValues[326] = 283.5506  ;
+  tableValues[327] = 284.3119  ;
+  tableValues[328] = 285.0726  ;
+  tableValues[329] = 285.8328  ;
+  tableValues[330] = 286.5924  ;
+  tableValues[331] = 287.3515  ;
+  tableValues[332] = 288.1100  ;
+  tableValues[333] = 288.8680  ;
+  tableValues[334] = 289.6254  ;
+  tableValues[335] = 290.3823  ;
+  tableValues[336] = 291.1386  ;
+  tableValues[337] = 291.8944  ;
+  tableValues[338] = 292.6496  ;
+  tableValues[339] = 293.4043  ;
+  tableValues[340] = 294.1584  ;
+  tableValues[341] = 294.9120  ;
+  tableValues[342] = 295.6650  ;
+  tableValues[343] = 296.4175  ;
+  tableValues[344] = 297.1695  ;
+  tableValues[345] = 297.9209  ;
+  tableValues[346] = 298.6718  ;
+  tableValues[347] = 299.4221  ;
+  tableValues[348] = 300.1719  ;
+  tableValues[349] = 300.9212  ;
+  tableValues[350] = 301.6699  ;
+  tableValues[351] = 302.4181  ;
+  tableValues[352] = 303.1657  ;
+  tableValues[353] = 303.9128  ;
+  tableValues[354] = 304.6594  ;
+  tableValues[355] = 305.4054  ;
+  tableValues[356] = 306.1509  ;
+  tableValues[357] = 306.8959  ;
+  tableValues[358] = 307.6403  ;
+  tableValues[359] = 308.3843  ;
+  tableValues[360] = 309.1276  ;
+  tableValues[361] = 309.8705  ;
+  tableValues[362] = 310.6128  ;
+  tableValues[363] = 311.3546  ;
+  tableValues[364] = 312.0959  ;
+  tableValues[365] = 312.8366  ;
+  tableValues[366] = 313.5768  ;
+  tableValues[367] = 314.3165  ;
+  tableValues[368] = 315.0557  ;
+  tableValues[369] = 315.7943  ;
+  tableValues[370] = 316.5324  ;
+  tableValues[371] = 317.2700  ;
+  tableValues[372] = 318.0071  ;
+  tableValues[373] = 318.7437  ;
+  tableValues[374] = 319.4797  ;
+  tableValues[375] = 320.2152  ;
+  tableValues[376] = 320.9502  ;
+  tableValues[377] = 321.6847  ;
+  tableValues[378] = 322.4187  ;
+  tableValues[379] = 323.1521  ;
+  tableValues[380] = 323.8851  ;
+  tableValues[381] = 324.6175  ;
+  tableValues[382] = 325.3494  ;
+  tableValues[383] = 326.0808  ;
+  tableValues[384] = 326.8116  ;
+  tableValues[385] = 327.5420  ;
+  tableValues[386] = 328.2719  ;
+  tableValues[387] = 329.0012  ;
+  tableValues[388] = 329.7300  ;
+  tableValues[389] = 330.4584  ;
+  tableValues[390] = 331.1862  ;
+  tableValues[391] = 331.9135  ;
+  tableValues[392] = 332.6403  ;
+  tableValues[393] = 333.3666  ;
+  tableValues[394] = 334.0924  ;
+  tableValues[395] = 334.8177  ;
+  tableValues[396] = 335.5424  ;
+  tableValues[397] = 336.2667  ;
+  tableValues[398] = 336.9905  ;
+  tableValues[399] = 337.7138  ;
+  tableValues[400] = 338.4365  ;
+  tableValues[401] = 339.1588  ;
+  tableValues[402] = 339.8806  ;
+  tableValues[403] = 340.6019  ;
+  tableValues[404] = 341.3226  ;
+  tableValues[405] = 342.0429  ;
+  tableValues[406] = 342.7627  ;
+  tableValues[407] = 343.4820  ;
+  tableValues[408] = 344.2008  ;
+  tableValues[409] = 344.9190  ;
+  tableValues[410] = 345.6368  ;
+  tableValues[411] = 346.3541  ;
+  tableValues[412] = 347.0710  ;
+  tableValues[413] = 347.7873  ;
+  tableValues[414] = 348.5031  ;
+  tableValues[415] = 349.2184  ;
+  tableValues[416] = 349.9333  ;
+  tableValues[417] = 350.6476  ;
+  tableValues[418] = 351.3615  ;
+  tableValues[419] = 352.0749  ;
+  tableValues[420] = 352.7878  ;
+  tableValues[421] = 353.5002  ;
+  tableValues[422] = 354.2121  ;
+  tableValues[423] = 354.9235  ;
+  tableValues[424] = 355.6345  ;
+  tableValues[425] = 356.3449  ;
+  tableValues[426] = 357.0549  ;
+  tableValues[427] = 357.7644  ;
+  tableValues[428] = 358.4734  ;
+  tableValues[429] = 359.1820  ;
+  tableValues[430] = 359.8900  ;
+  tableValues[431] = 360.5976  ;
+  tableValues[432] = 361.3047  ;
+  tableValues[433] = 362.0113  ;
+  tableValues[434] = 362.7174  ;
+  tableValues[435] = 363.4231  ;
+  tableValues[436] = 364.1282  ;
+  tableValues[437] = 364.8329  ;
+  tableValues[438] = 365.5372  ;
+  tableValues[439] = 366.2409  ;
+  tableValues[440] = 366.9442  ;
+  tableValues[441] = 367.6470  ;
+  tableValues[442] = 368.3493  ;
+  tableValues[443] = 369.0512  ;
+  tableValues[444] = 369.7526  ;
+  tableValues[445] = 370.4535  ;
+  tableValues[446] = 371.1539  ;
+  tableValues[447] = 371.8539  ;
+  tableValues[448] = 372.5534  ;
+  tableValues[449] = 373.2524  ;
+  tableValues[450] = 373.9510  ;
+  tableValues[451] = 374.6491  ;
+  tableValues[452] = 375.3467  ;
+  tableValues[453] = 376.0439  ;
+  tableValues[454] = 376.7406  ;
+  tableValues[455] = 377.4368  ;
+  tableValues[456] = 378.1326  ;
+  tableValues[457] = 378.8279  ;
+  tableValues[458] = 379.5227  ;
+  tableValues[459] = 380.2171  ;
+  tableValues[460] = 380.9110  ;
+  tableValues[461] = 381.6045  ;
+  tableValues[462] = 382.2975  ;
+  tableValues[463] = 382.9900  ;
+  tableValues[464] = 383.6821  ;
+  tableValues[465] = 384.3737  ;
+  tableValues[466] = 385.0648  ;
+  tableValues[467] = 385.7555  ;
+  tableValues[468] = 386.4458  ;
+  tableValues[469] = 387.1356  ;
+  tableValues[470] = 387.8249  ;
+  tableValues[471] = 388.5138  ;
+  tableValues[472] = 389.2022  ;
+  tableValues[473] = 389.8902  ;
+  tableValues[474] = 390.5777  ;
+  tableValues[475] = 391.2547  ;
+  tableValues[476] = 391.9513  ;
+  tableValues[477] = 392.6375  ;
+  tableValues[478] = 393.3232  ;
+  tableValues[479] = 394.0085  ;
+  tableValues[480] = 394.6933  ;
+  tableValues[481] = 395.3776  ;
+  tableValues[482] = 396.0615  ;
+  tableValues[483] = 396.7450  ;
+  tableValues[484] = 397.4280  ;
+  tableValues[485] = 398.1105  ;
+  tableValues[486] = 398.7927  ;
+  tableValues[487] = 399.4743  ;
+  tableValues[488] = 400.1555  ;
+  tableValues[489] = 400.8363  ;
+  tableValues[490] = 401.5167  ;
+  tableValues[491] = 402.1966  ;
+  tableValues[492] = 402.8760  ;
+  tableValues[493] = 403.5550  ;
+  tableValues[494] = 404.2336  ;
+  tableValues[495] = 404.9117  ;
+  tableValues[496] = 405.5894  ;
+  tableValues[497] = 406.2666  ;
+  tableValues[498] = 406.9434  ;
+  tableValues[499] = 407.6198  ;
+  tableValues[500] = 408.2957  ;
+
+
+</script>
+
+
+
+</body>
+</html>
