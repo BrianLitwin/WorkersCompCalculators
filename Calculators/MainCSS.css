@@ -1,0 +1,146 @@
+
+body {
+
+}
+
+.tools-title-area {
+  margin-top: 1em;
+}
+
+.form-title-area {
+  margin-bottom: 1em;
+}
+
+.form-title-area h2 {
+  font-size: 40px;
+  font-weight: 200;
+}
+
+.field {
+  padding-bottom: 6px;
+}
+
+.field label {
+  font-size: 20px;
+  font-weight: 200;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.result span {
+  display: block;
+}
+
+.result #result-label-1, #result-label-2 {
+  font-weight: 200;
+  font-size: 20px;
+}
+
+.result #result-value-1, #result-value-2 {
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.result  #result-value-1 {
+  padding-bottom: 8px;
+}
+
+
+.field input {
+  height: 38px;
+  position: relative;
+  background: transparent;
+  border: 1px solid #fff;
+  border-radius: 0;
+  color: #fff;
+  padding: 0 10px;
+  font-weight: 700;
+  outline: none;
+}
+
+.date-input {
+  position: relative;
+}
+
+.date-input i {
+  position: absolute;
+  left: 186px;
+  bottom: 12px;
+}
+
+.calculator select {
+  height: 38px;
+  border: 1px solid #fff;
+}
+
+.calculator .result {
+  background: rgba(255, 255, 255, 0.3);
+  width: 100%;
+  min-height: 88px;
+  max-width: 300px;
+  position: relative;
+  padding: 10px 10px 15px;
+  margin-top: 20px;
+}
+
+ hr {
+  border-color: white;
+}
+
+.calculator .result:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-width: 16px 16px 0 0;
+  border-style: solid;
+  border-color: transparent #911307;
+}
+
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.calculator {
+  padding-top: 2em;
+  padding-bottom: 6em;
+  background-color: #911307;
+  color: #fff;
+}
+
+.calc-menu {
+  padding: 10px 10px;
+  overflow-x: auto;
+  background-color: #911307;
+  padding-bottom: 3em;
+}
+
+.calc-menu #tools-label {
+  color: #fff;
+  font-size: 40;
+  font-weight: 200;
+}
+
+#jump-to-label {
+  font-weight: 200;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.calc-menu href {
+  width: 350px;
+  color: #fff;
+  font-size: 20;
+  font-weight: 200;
+  border-color: transparent;
+  background: transparent;
+  outline: none;
+  display: block;
+}
+
+.calc-menu href:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
