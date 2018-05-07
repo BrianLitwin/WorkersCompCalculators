@@ -1,7 +1,6 @@
 
 const functions = require('../Calculators/JS');
 
-
 test("add commas to numbers", ()=> {
 
   expect(functions.commaSeparateNumber(91412)).toBe("91,412")

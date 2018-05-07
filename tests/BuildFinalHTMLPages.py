@@ -1,5 +1,4 @@
 
-
 filepath = "./../"
 
 ncHTML = open(filepath + "Calculators/NorthCarolinaCalculators.html", "r")
@@ -15,6 +14,7 @@ mainCSSLink = "./MainCSS.css"
 mainJavascriptLink = "JS.js"
 
 def containsCSSorJSLink(line):
+
     if mainCSSLink in line:
         return True
 
@@ -72,3 +72,5 @@ def makeFinalHTMLPage(fromPage, finalPage):
 def buildFinalPages():
     makeFinalHTMLPage(ncHTML, NCFinalPage)
     makeFinalHTMLPage(scHTML, SCFinalPage)
+
+buildFinalPages()

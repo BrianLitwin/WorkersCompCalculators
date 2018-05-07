@@ -8,15 +8,18 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-southCarolinaURL = 'file:///Users/B_Litwin/Desktop/WorkmansCompCalculators/Calculators/Final/SouthCarolinaCalculators.html'
-northCarolinaURL = 'file:///Users/B_Litwin/Desktop/WorkmansCompCalculators/Calculators/Final/NorthCarolinaCalculators.html'
+southCarolinaURL = 'file:///Users/B_Litwin/Desktop/WorkersCompCalculators/Calculators/Final/SouthCarolinaCalculators.html'
+northCarolinaURL = 'file:///Users/B_Litwin/Desktop/WorkersCompCalculators/Calculators/Final/NorthCarolinaCalculators.html'
 
 #configure browser
 opts = Options()
-#opts.set_headless()
-#assert opts.headless
+opts.set_headless()
+assert opts.headless
 southCarolinaBrowser = Chrome(options=opts)
 southCarolinaBrowser.get(southCarolinaURL)
+
+northCarolinaBrowser = Chrome(options=opts)
+northCarolinaBrowser.get(northCarolinaURL)
 
 
 class Results:
@@ -46,13 +49,6 @@ def getResults(parentClass):
 
     return Results(label1, value1, label2, value2)
 
-#
-#Test PPD Calculators
-#
-
-scPPDCalculator = southCarolinaBrowser.find_element_by_id('PPD-calculator')
-scLifeExpectancy = southCarolinaBrowser.find_element_by_id('SC-Life-Expectancy-calculator')
-scPresentValueForm = southCarolinaBrowser.find_element_by_id('present-value-calculator')
 
 def populatePPDForm(parentClass, compRate, impairementRating, bodypart):
 
@@ -88,29 +84,48 @@ def populatePresentValueForm(parentClass, weeklyPayment, weeks, interestRate):
     interestRateElement.send_keys(interestRate)
     return getResults(parentClass)
 
-class TestCalculators(unittest.TestCase):
+class SCCalulators:
 
-    def testPPD(self):
-        results = populatePPDForm(scPPDCalculator, 67, 45, "Leg - 195 Weeks")
+    def __init__(self):
+        self.ppd = southCarolinaBrowser.find_element_by_id('PPD-calculator')
+        self.lifeExpectancy = southCarolinaBrowser.find_element_by_id('SC-Life-Expectancy-calculator')
+        self.presentValue = southCarolinaBrowser.find_element_by_id('present-value-calculator')
+
+class NCCalculators:
+    def __init__(self):
+        self.ppd = northCarolinaBrowser.find_element_by_id('PPD-calculator')
+        self.lifeExpectancy = northCarolinaBrowser.find_element_by_id('NC-Life-Expectancy-calculator')
+        self.presentValue = northCarolinaBrowser.find_element_by_id('present-value-calculator')
+
+SCCalcs = SCCalulators()
+NCCalcs = NCCalculators()
+
+class TestSCCalculators(unittest.TestCase):
+
+    def test_SC_PPD(self):
+        results = populatePPDForm(SCCalcs.ppd, 67, 45, "Leg - 195 Weeks")
         self.assertEqual(results.label1, "PPD")
         self.assertEqual(results.value1, "$5,879.25")
 
-    def testLifeExpectancy(self):
-        results = populateSCLifeExpectancy(scLifeExpectancy, 28, 'male')
+    def test_NC_PPD(self):
+        results = populatePPDForm(NCCalcs.ppd, 68, 98, "Middle Finger - 40 Weeks")
+        self.assertEqual(results.label1, "PPD")
+        self.assertEqual(results.value1, "$2,665.60")
+
+
+    def test_SC_LifeExpectancy(self):
+        results = populateSCLifeExpectancy(SCCalcs.lifeExpectancy, 28, 'male')
         self.assertEqual(results.label1, "Remaining Years")
         self.assertEqual(results.value1, "49.68")
         self.assertEqual(results.label2, "Life Expectancy")
         self.assertEqual(results.value2, "77.68")
 
     def testPresentValue(self):
-        results = populatePresentValueForm(scPresentValueForm, 4, 1198, 96)
+        results = populatePresentValueForm(SCCalcs.presentValue, 4, 1198, 96)
         self.assertEqual(results.label1, "Total Payment")
         self.assertEqual(results.value1, "$4,792")
         self.assertEqual(results.label2, "Present Value")
         self.assertEqual(results.value2, "$216.67")
-
-
-
 
 unittest.main()
 
